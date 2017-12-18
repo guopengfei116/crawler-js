@@ -2,8 +2,8 @@
  * GET请求
  * @params { url: String || Object } url或配置对象
  * @params { retry: Number } 失败后重试次数
- * @params config { url: String } url
- * @params config { retry: Number } 失败后重试次数
+ * @params { config.url: String } url
+ * @params { config.retry: Number } 失败后重试次数
  * @return Promise.Any 默认返回rsp对象，遇到失败时返回含有url信息的对象
  */
 async function one(url, retry) {
@@ -30,7 +30,7 @@ async function one(url, retry) {
  * @params { config.retry: Number } 错误重试次数
  * @return Promise.Responese
  */
-async function multi({ urls, retry }) {
+async function more({urls, retry}) {
     return await Promise.all(urls.map(v => one(url, retry)));
 };
 
@@ -44,7 +44,7 @@ async function multi({ urls, retry }) {
  * @params { config.tranformAll: Function.optional } 数据转换的钩子函数，传入所有itemData构成的数组, 要求返回新的resultData
  * @return Promise.Any 默认会返回一个数组, 也可通过钩子函数设定最终的返回结果
  */
-async function concurrent({ urls, retry, concurrent, tranformSingle, tranformAll }) {
+async function moreConcurrent({ urls, retry, concurrent, tranformSingle, tranformAll }) {
     let tempUrls = null, result = [];
 
     while((tempUrls = urls.slice(currentIndex, currentIndex + concurrent)) && tempUrls.length) {
@@ -57,6 +57,6 @@ async function concurrent({ urls, retry, concurrent, tranformSingle, tranformAll
 // 导出两个请求方法
 module.exports = {
     one,
-    multi,
-    concurrent
+    more,
+    moreConcurrent
 };
