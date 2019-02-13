@@ -31,14 +31,14 @@ async function onePaging({entryURL, concurrent=10, hasNext}) {
     let currentIndex = 0;
     let result = [];
 
-    // 自动生成不同页码的url进行请求，
+    // 自动生成不同页码的url进行请求
     while(true) {
         let urls = getBuildURL(entryURL, currentIndex, currentIndex += concurrent)
         let rsps = await request.more(urls);
         result.push(...rsps);
 
-        // 当没有下一页的时候返回所有的rsp对象
-        if(rsps.every(hasNext)) {
+        // 只要有一个为false，证明没有下一页了，返回所有的rsp对象
+        if(!rsps.every(hasNext)) {
             return result;
         }
     }
@@ -50,7 +50,7 @@ async function onePaging({entryURL, concurrent=10, hasNext}) {
  * @params { config.entryURLS: Array[String] } 入口url
  * @params { config.concurrent: Number } 并发量
  * @params { config.hasNext: Function } 钩子函数，传入rsp对象，要求返回boolean值判断是否还有下一页
- * @return Promise.Array[Object.Response] 结果为含有多个对象的数组，每个对象的key为入口url
+ * @return Promise.Array[Object.Response] 结果为含有多个对象的数组，每个对象的key为入口url, value位置当前入口url分页获取的所有response
  */
 async function morePaging({entryURLS, concurrent=10, isNext}) {
     let currentIndex = 0, retry = 10;
